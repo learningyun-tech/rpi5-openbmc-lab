@@ -137,3 +137,7 @@ Pi 5 thermal_zone ──> rpi5-openbmc-simulator ──> OpenBMC D-Bus
 - [Raspberry Pi 溫度監控說明](https://www.raspberrypi.com/documentation/computers/config_txt.html#monitoring-core-temperature)
 
 本專案採 Apache-2.0 授權；上游元件各自依原授權條款散布。
+
+## 開發方式
+
+程式碼、腳本與文件撰寫使用 AI 工具輔助；實際建置、燒錄、部署及實機驗證由本人執行，並保留測試紀錄。
