@@ -22,12 +22,13 @@
 
 | 能力 | 狀態 | 說明 |
 |---|---:|---|
-| OpenBMC Web UI / HTTPS | ✅ | `bmcweb` + Web UI |
-| Redfish API | ✅ | Manager、Chassis、Sensor 等資源 |
-| SSH / D-Bus / systemd | ✅ | 可做嵌入式與 OpenBMC 開發實驗 |
-| CPU 溫度 Sensor | ✅ | 讀取 `/sys/class/thermal`，每 2 秒更新 |
-| DHCP 網路管理 | ✅ | 預設有線 Ethernet DHCP |
-| I2C / SPI / UART | ✅ | 建置時啟用，供後續擴充 |
+| Web UI / HTTPS | 部分實測 | HTTPS 已驗證；Web UI 登入與操作未列入本次驗收 |
+| Redfish API | 已實測 | Manager、Chassis、CPU Sensor 查詢；詳見實機驗收報告 |
+| SSH / D-Bus / systemd | 已實測 | Ubuntu 對 Pi 的 SSH、D-Bus 屬性及核心服務查詢 |
+| CPU 溫度 Sensor | 已實測 | 真實 sysfs 溫度經 C++、D-Bus 到 Redfish；非同步取樣 |
+| DHCP 網路管理 | 已實測（Wi-Fi） | 5 GHz Wi-Fi 重開機後取得位址；有線 Ethernet 未列入本次驗收 |
+| UART | 已實測 | `ttyAMA10` 開機、登入及除錯 |
+| I2C / SPI | 尚未實測 | 建置設定不等於實體周邊通訊已通過 |
 | 伺服器電源／Reset | ❌ | 需要額外 GPIO 隔離與受控主機 |
 | Host IPMI（KCS/BT） | ❌ | Pi 5 沒有 LPC/eSPI BMC 介面 |
 | KVM / Virtual Media / SOL | ❌ | 需要額外視訊、USB gadget 或主機串列線路 |
@@ -98,7 +99,7 @@ Pi 5 thermal_zone ──> rpi5-openbmc-simulator ──> OpenBMC D-Bus
                     bmcweb/Redfish             busctl        Web UI
                          │
                          ▼
-        /redfish/v1/Chassis/RPi5/Sensors/CPU_Temperature
+        /redfish/v1/Chassis/RPi5/Sensors/temperature_CPU_Temperature
 ```
 
 自訂服務同時發布 Chassis inventory 與 `all_sensors` association，因此 `bmcweb`
@@ -137,6 +138,10 @@ Pi 5 thermal_zone ──> rpi5-openbmc-simulator ──> OpenBMC D-Bus
 - [Raspberry Pi 溫度監控說明](https://www.raspberrypi.com/documentation/computers/config_txt.html#monitoring-core-temperature)
 
 本專案採 Apache-2.0 授權；上游元件各自依原授權條款散布。
+
+## 實機驗證與已知限制
+
+實測項目、資料路徑與尚未驗證功能，請見[實機驗收報告](docs/interview-closeout-20261014-zh-TW.md)。
 
 ## 開發方式
 
