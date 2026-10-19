@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-
+printf '%s\n' 'WARNING: curl -k skips TLS certificate verification; isolated trusted lab use only.' >&2
 host=${1:-}
 user_name=${BMC_USER:-root}
 
@@ -70,7 +70,7 @@ redfish_get "/redfish/v1/" "Service Root"
 redfish_get "/redfish/v1/Managers/bmc" "BMC Manager"
 redfish_get "/redfish/v1/Chassis/RPi5" "Pi 5 Chassis"
 redfish_get "/redfish/v1/Chassis/RPi5/Sensors" "Sensor Collection"
-redfish_get "/redfish/v1/Chassis/RPi5/Sensors/CPU_Temperature" \
+redfish_get "/redfish/v1/Chassis/RPi5/Sensors/temperature_CPU_Temperature" \
     "Real SoC Temperature"
 
 echo
