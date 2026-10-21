@@ -1,12 +1,21 @@
 # Raspberry Pi 5 OpenBMC 實驗專案
 
-這是一套可重現的教學型 OpenBMC 映像：使用 Raspberry Pi 5 當作 BMC
+這是一套以版本鎖定設定建置的教學型 OpenBMC 映像：使用 Raspberry Pi 5 當作 BMC
 開發板，提供 HTTPS Web UI、Redfish、SSH、D-Bus、使用者／網路／事件管理，
 並把 Pi 5 的真實 SoC 溫度發布成 OpenBMC Sensor。
 
 > 這是實驗與學習平台，不是經硬體廠商驗證的產品 BMC。Pi 5 沒有伺服器主機的
 > LPC/KCS、eSPI、KVM 擷取、電源控制與韌體快閃線路；本專案刻意不把這些功能
 > 偽裝成可用。
+
+## 面試閱讀導覽
+
+- [OpenBMC 建置流程解析](docs/openbmc-build-guide-zh-TW.md)：從版本鎖定、layer／recipe、交叉編譯到映像與實機驗證。
+- [系統架構](docs/architecture.md)：C++、D-Bus Sensor、inventory association 與 Redfish 的分工。
+- [實機驗收與已知限制](docs/interview-closeout-20261014-zh-TW.md)：已觀察結果、版本界線與未驗證功能。
+
+本案重點是 Raspberry Pi 5 上的 OpenBMC 建置、部署及使用者空間整合；不是自行開發核心驅動，也不是完整伺服器 BMC 產品。
+
 
 ## 專案成果
 
@@ -40,6 +49,15 @@
 必須位在 Linux 檔案系統，不能放在 WSL 的 `/mnt/c`。Yocto Wrynose 官方文件
 列出的參考資源是至少 140 GiB 可用空間與 32 GiB RAM；核心多、SSD 快會明顯
 縮短第一次建置時間。
+
+第一次取得專案時，先在 Ubuntu 的 Linux 檔案系統建立工作樹；若下列目錄已存在，直接使用既有工作樹，不要覆蓋：
+
+```bash
+mkdir -p ~/src
+git clone --branch master https://github.com/learningyun-tech/rpi5-openbmc-lab.git ~/src/rpi5-openbmc-lab
+```
+
+以下命令只在有意建置映像時執行；僅更新 GitHub 文件不必重跑。每個階段的原理、產物及成功判準，請見[建置流程解析](docs/openbmc-build-guide-zh-TW.md)。
 
 ```bash
 cd ~/src/rpi5-openbmc-lab
@@ -121,10 +139,9 @@ Pi 5 thermal_zone ──> rpi5-openbmc-simulator ──> OpenBMC D-Bus
 
 ## 已知限制
 
-本專案已做 metadata、腳本及原始碼的靜態驗證；完整 Yocto 建置需要 Linux、
-大量磁碟空間與較長時間，Windows 工作區內不直接執行。上游 Pi 5 BSP 已存在，
-但 Pi 5 並不是 OpenBMC 產品平台清單中經 CI 完整驗證的機器，因此升級
-`upstream.lock` 後應重新做完整建置與實機開機測試。
+本專案已有 Ubuntu 建置、microSD 部署、Pi 開機、5 GHz Wi-Fi、SSH 與 Redfish 的實測紀錄，範圍與限制見[實機驗收報告](docs/interview-closeout-20261014-zh-TW.md)。
+
+版本鎖定與建置設定有助重建，但尚未從全新 clone 完成乾淨環境重建，不能宣稱已完整驗證可重現或具量產資格。UART 已實測，I2C／SPI 實體通訊及其他未驗證項目維持原標示；更新上游基準後應重新建置及驗證。
 
 遇到問題請看 [疑難排解](docs/troubleshooting-zh-TW.md)。
 
